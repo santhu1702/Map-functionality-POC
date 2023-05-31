@@ -1,0 +1,13 @@
+var sqlConfig = {
+    server: 'quadrantpocs.database.windows.net',
+    database: 'Forecast_Scenario_Modelling',
+    user: 'quadrant',
+    password: 'Crowd#123' ,
+    options: {
+        connectTimeout: 15000,
+        encrypt:false,
+        enableArithAbort: true,
+    }
+};
+
+module.exports = sqlConfig;
