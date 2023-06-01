@@ -5,7 +5,7 @@ var sqlConfig = {
     password: 'Crowd#123' ,
     options: {
         connectTimeout: 15000,
-        encrypt:false,
+        encrypt:true,
         enableArithAbort: true,
     }
 };

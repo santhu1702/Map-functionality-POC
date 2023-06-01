@@ -1,0 +1,49 @@
+<%- include("partials/header") %>
+
+<div class="row">
+  <div class="col-4">
+    <section class="p-1">
+      <div class="col-12 row d-flex">
+        <label for="Zip" class="col-4 text-end">Zip:</label>
+        <div class="col-6">
+          <select class="ms-multi" multiple="multiple" id="ddn_Zip">
+            <option value="0" selected>select Zip code</option>
+            <% for(var v=0; v<zip.length; v++) { %>
+            <option value="<%=zip[v]["Zip"]%>"><%=zip[v]["Zip"]%>
+            </option>
+            <% } %>
+          </select> 
+        </div>
+      </div>
+      <div class="col-12 row d-flex">
+        <label for="State" class="col-4 text-end">State:</label>
+        <div class="col-6">
+          <select class="form-select" id="ddn_State">
+          </select>
+        </div>
+      </div>
+      <div class="col-12 row d-flex">
+        <label for="Zip" class="col-4 text-end">ACV_Est_Yearly:</label>
+        <div class="col-6">
+          <span>
+            <%=acv[0]["minACV_Est_Yearly"]%>
+          </span><input type="range" min="<%=acv[0]["minACV_Est_Yearly"]%>" max="<%=acv[0]["maxACV_Est_Yearly"]%>" value="<%=acv[0]["minACV_Est_Yearly"]%>" class="form-control-range range-slider" id="ACV_Est_Yearly"> <span>
+            <%=acv[0]["maxACV_Est_Yearly"]%>
+          </span>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="col-8">
+    <div id="map" style="width: 600px; height: 400px;"></div>
+  </div>
+</div>
+<div class="col-3">
+  <button class="btn btn-primary" onclick="getMap()">Get Map</button>
+</div>
+
+<script src="/js/map.js"></script>
+ 
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB2CjlDccZg6IKGgA9p9-f575JICUX70D0&callback=initMap&v=weekly" defer></script>
+<%- include("partials/footer") %>
