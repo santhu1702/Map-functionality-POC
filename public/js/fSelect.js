@@ -29,7 +29,7 @@
         }
         else {
             var settings = $.extend({
-                placeholder: 'Select Judges',
+                placeholder: 'Select Options',
                 numDisplayed: 3,
                 overflowText: '{n} selected',
                 searchText: 'Search',

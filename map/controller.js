@@ -71,25 +71,24 @@ async function getState() {
     }
 }
 
-async function getMapDetails(ACV_Est_Yearly,zip) {
+async function getMapDetailAndCoordinates(zip, state) {
     try {
-        // let query = `
-        //     SELECT TOP 1 MockID, ACV_Est_Yearly, Latitude, Longitude, drt_store, Zip, State, ZipRank
-        //     FROM (
-        //     -- Select the exact match if it exists
-        //             SELECT *
-        //             FROM mock_stores
-        //             WHERE ACV_Est_Yearly = ${ACV_Est_Yearly}
-            
-        //         UNION ALL
-            
-        //             -- If an exact match is not found, retrieve the nearest value
-        //             SELECT TOP 1
-        //                 *
-        //             FROM mock_stores
-        //             ORDER BY ABS(ACV_Est_Yearly - ${ACV_Est_Yearly})
-        //     ) AS s
-        // `;
+        const [map, polygon] = await Promise.all([
+             getMapDetails(zip),
+             stateGeoCoordinates(state)
+        ]);
+        // Process the results here
+        // console.log('Zip Result:', zipResult);
+        // console.log('ACV Result:', acvResult);
+        // Return the combined results or do further processing
+        return { map, polygon };
+    } catch (error) {
+        return handleErrors(error, '/map/getMapDetailAndCoordinates');
+    }
+}
+
+async function getMapDetails(zip) {
+    try {
         let query = `
             SELECT Latitude,Longitude,drt_store,c.zip,c.[State],pop_density
                 FROM 
@@ -103,9 +102,27 @@ async function getMapDetails(ACV_Est_Yearly,zip) {
         });
     }
     catch (error) {
+        return handleErrors(error, '/map/getMapDetails');
+    }
+}
+
+async function stateGeoCoordinates(state) {
+    try {
+        let query = `
+                 select * from stateCoordinates
+                 WHERE StateCode in ('${state}')
+            `; 
+        return await dataConnector.getData(query).then((result) => {
+            if (result.message === "fail") return result;
+            return result.response;
+        });
+    }
+    catch (error) {
         return handleErrors(error, '/map/getACV_Est_Yearly');
     }
 }
+
+
 
 function handleErrors(errMessage, errLocation) {
     return {
@@ -116,4 +133,4 @@ function handleErrors(errMessage, errLocation) {
     };
 };
 
-module.exports = {  getState ,getMapDetails ,getZip}
+module.exports = { getState, getMapDetails, getZip,getMapDetailAndCoordinates }

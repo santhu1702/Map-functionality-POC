@@ -37,7 +37,6 @@ function getZips() {
     let state = $('#ddn_State').val();
 
     if (state === "0") {
-        alert("Please select a state.");
         return;
     }
     try {
@@ -54,18 +53,15 @@ function getZips() {
                     alert(result.message);
                     return;
                 }
-                var ddnZip = $('#ddn_Zip');
-                ddnZip.empty();
-                var options = $.map(result, function (item) {
-                    return $('<option>', {
-                        value: item.Zip,
-                        text: item.Zip
-                    });
-                });
-                ddnZip.append(options);
+                $('#div_ddnZip').empty();
+                var ddnZip = '<select class="form-control ddn_Zip" multiple="multiple" id="ddn_Zip">';
+                for (var i = 0; i < result.length; i++) {
+                    ddnZip += '<option value="' + result[i].Zip + '">' + result[i].Zip + '</option>';
+                }
+                ddnZip += ' </select>';
+                $('#div_ddnZip').append(ddnZip);
                 $('.ddn_Zip').fSelect();
                 $('#div_ddnZip').show();
-                // $('#div_ddnZip').attr('style','display: none !important')
 
             },
             error: function () {
@@ -77,6 +73,7 @@ function getZips() {
         console.log("Known Error:", err);
     }
 }
+
 
 function getStates() {
     let zip = $('#ddn_Zip').val();
@@ -126,32 +123,21 @@ function getMap() {
 
     try {
         $.ajax({
-            url: "map/getMapDetails",
+            url: "map/getMapDetailAndCoordinates",
             type: "GET",
             contentType: "application/json",
             dataType: "json",
             data: {
-                ACV_Est_Yearly: ACV_Est_Yearly,
+                state: State,
                 zip: zip.toString()
             },
             success: function (result) {
-                debugger
+                // debugger
                 if (result.message === "fail") {
                     alert(result.message);
                     return;
                 }
-                leafMap(result)
-                // var convertedData = result.map(function (item) {
-                //     return {
-                //         center: {
-                //             lat: parseFloat(item.Latitude),
-                //             lng: parseFloat(item.Longitude)
-                //         },
-                //         population: item.pop_density
-                //     };
-                // });
-                // console.log(convertedData)
-                // Map(convertedData)
+                leafMap(result.coordinates, result.polygon[0])
             },
             error: function () {
                 console.log("An error occurred during the AJAX request.");
@@ -215,35 +201,45 @@ function Map(cityMap) {
     }
 }
 
-var ploy = [
-    [51.509, -0.08],
-    [51.503, -0.06],
-    [51.51, -0.047]
-]
 
-function leafMap(data) {
+
+function leafMap(data, polygon) {
     let mapContainer = L.DomUtil.get('map');
     if (mapContainer) {
         mapContainer._leaflet_id = null;
     }
-    let map = L.map('map').setView([parseFloat(data[0].Latitude), parseFloat(data[0].Longitude)], 5);
+
+    const jsonObject = JSON.parse(polygon.geo_point_2d);
+    const coordinatesArray = [jsonObject.lat, jsonObject.lon];
+
+    const map = L.map('map').setView(coordinatesArray, 5);
+
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
-    // const data = data
-    // Add more data objects here
+
     data.forEach(obj => {
         const lat = parseFloat(obj.Latitude);
         const lng = parseFloat(obj.Longitude);
-        const popupContent = `Population Density for <b>Zip</b> : ${obj.zip}: ${obj.pop_density}`;
-        L.circle([lat, lng], {
-            color: (obj.drt_store) ? '#4472c4' : '#92d050',
-            // fillColor: '#f03',
-            fillOpacity: 5.5,
-            radius: 10000
-        })
-            .addTo(map)
-            .bindPopup(popupContent);
+        const popupContent = `Population Density for <b>Zip</b>: ${obj.zip}: ${obj.pop_density}`;
+
+        (function (content) {
+            L.circle([lat, lng], {
+                color: obj.drt_store ? '#ffc107' : '#0d6efd',
+                fillOpacity: 0.5,
+                radius: 2000
+            }).addTo(map).bindPopup(content);
+        })(popupContent);
     });
+
+
+    const p = Object.values(JSON.parse(polygon.st_asgeojson).geometry);
+    const layer = L.geoJSON({
+        type: p[1], "coordinates": p[0]
+    });
+    layer.setStyle({ weight: "12", fillOpacity: 0.8 });
+    map.addLayer(layer);
+    map.fitBounds(layer.getBounds());
 }
+

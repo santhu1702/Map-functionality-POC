@@ -1,0 +1,43 @@
+<%- include("partials/header") %>
+
+<div class="row">
+  <div class="col-4">
+    <section class="p-1">
+      <div class="col-12 row d-flex">
+        <label for="State" class="col-4 text-end">State:</label>
+        <div class="col-6">
+          <select class="form-select" id="ddn_State" onchange="getZips()">
+            <option value="0">Select Zip </option>
+            <% for(var v=0; v<state.length; v++) { %>
+            <option value="<%=state[v]["State"]%>"><%=state[v]["State"]%>
+            </option>
+            <% } %>
+          </select>
+        </div>
+      </div>
+      <div class="col-12 row d-flex" style="display: none !important;" id="div_ddnZip">
+        <!-- <label for="Zip" class="col-4 text-end">Zip:</label>
+        <div class="col-6">
+          <select class="ddn_Zip form-select" multiple="multiple" id="ddn_Zip">
+            <optgroup label="Zip code">
+              <option value="0" selected disabled>select Zip code</option> 
+            </optgroup>
+          </select>
+        </div> -->
+      </div> 
+      <div class="col-3">
+        <button class="btn btn-primary" onclick="getMap()">Get Map</button>
+      </div>
+    </section>
+  </div>
+  <div class="col-8">
+    <div id="map" style="height: 50vh; width: 50vw;"></div>
+  </div>
+</div>
+
+
+<script src="/js/map.js"></script>
+
+
+<!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB2CjlDccZg6IKGgA9p9-f575JICUX70D0&callback=initMap&v=weekly" defer></script> -->
+<%- include("partials/footer") %>

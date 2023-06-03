@@ -39,5 +39,14 @@ route.get("/getMapDetails", (req, res) => {
     })
 })
 
+route.get("/getMapDetailAndCoordinates",(req, res) => {
+    mapController.getMapDetailAndCoordinates(req.query.zip, req.query.state).then(result => {
+        res.send({
+            polygon : result.polygon,
+            coordinates : result.map
+        });
+    })
+})
+
 
 module.exports = route;
