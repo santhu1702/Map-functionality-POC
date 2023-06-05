@@ -14,11 +14,11 @@ var route = express.Router();
 //     });
 // });
 route.get("/", (req, res) => {
-    mapController.getState(req.query.state).then((response) => {
+    mapController.getStateAndMock().then((response) => {
         console.log(response)
         res.render("map", {
-            state: response
-
+            state: response.state,
+            mock : response.mock_store
         });
     });
 });

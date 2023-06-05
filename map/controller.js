@@ -76,11 +76,7 @@ async function getMapDetailAndCoordinates(zip, state) {
         const [map, polygon] = await Promise.all([
              getMapDetails(zip),
              stateGeoCoordinates(state)
-        ]);
-        // Process the results here
-        // console.log('Zip Result:', zipResult);
-        // console.log('ACV Result:', acvResult);
-        // Return the combined results or do further processing
+        ]); 
         return { map, polygon };
     } catch (error) {
         return handleErrors(error, '/map/getMapDetailAndCoordinates');
@@ -122,8 +118,33 @@ async function stateGeoCoordinates(state) {
     }
 }
 
+async function getAllMockData() {
+    try {
+        let query = `       
+                SELECT Latitude, Longitude, drt_store, ACV_Est_Yearly
+                from [dbo].[mock_storesOriginal] 
+            `; 
+        return await dataConnector.getData(query).then((result) => {
+            if (result.message === "fail") return result;
+            return result.response;
+        });
+    }
+    catch (error) {
+        return handleErrors(error, '/map/getACV_Est_Yearly');
+    }
+}
 
-
+async function getStateAndMock() {
+    try {
+        const [state, mock_store] = await Promise.all([
+             getState(),
+             getAllMockData()
+        ]); 
+        return { state, mock_store };
+    } catch (error) {
+        return handleErrors(error, '/map/getMapDetailAndCoordinates');
+    }
+}
 function handleErrors(errMessage, errLocation) {
     return {
         message: "fail",
@@ -133,4 +154,4 @@ function handleErrors(errMessage, errLocation) {
     };
 };
 
-module.exports = { getState, getMapDetails, getZip,getMapDetailAndCoordinates }
+module.exports = { getState, getMapDetails, getZip, getMapDetailAndCoordinates, getAllMockData, getStateAndMock }

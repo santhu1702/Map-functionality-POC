@@ -1,6 +1,27 @@
 $(document).ready(function () {
+    const coordinates = JSON.parse($('#val').val())
+    console.log('coordinates',coordinates)
 
-    // $('.ddn_Zip').fSelect(); 
+    const map = L.map('map').setView([coordinates[0].Latitude , coordinates[0].Longitude], 5);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,    
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    coordinates.forEach(obj => {
+        const lat = parseFloat(obj.Latitude);
+        const lng = parseFloat(obj.Longitude);
+        const popupContent = `Population Density for <b>Zip</b>: ${obj.zip}: ${obj.pop_density}`;
+
+        (function (content) {
+            L.circle([lat, lng], {
+                color: obj.drt_store ? '#ffc107' : '#0d6efd',
+                fillOpacity: 0.5,
+                radius: 20
+            }).addTo(map).bindPopup(content);
+        })(popupContent);
+    });
+    // $('.ddn_Zip').fSelect'();' 
 
     // const map = L.map('map').setView([51.505, -0.09], 13);
     // L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -212,26 +233,27 @@ function leafMap(data, polygon) {
     const jsonObject = JSON.parse(polygon.geo_point_2d);
     const coordinatesArray = [jsonObject.lat, jsonObject.lon];
 
-    const map = L.map('map').setView(coordinatesArray, 5);
+    const map = L.map('map')
+    //   .setView(coordinatesArray, 5);
 
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map);
+    // L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    //     maxZoom: 19,
+    //     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    // }).addTo(map);
 
-    data.forEach(obj => {
-        const lat = parseFloat(obj.Latitude);
-        const lng = parseFloat(obj.Longitude);
-        const popupContent = `Population Density for <b>Zip</b>: ${obj.zip}: ${obj.pop_density}`;
+    // data.forEach(obj => {
+    //     const lat = parseFloat(obj.Latitude);
+    //     const lng = parseFloat(obj.Longitude);
+    //     const popupContent = `Population Density for <b>Zip</b>: ${obj.zip}: ${obj.pop_density}`;
 
-        (function (content) {
-            L.circle([lat, lng], {
-                color: obj.drt_store ? '#ffc107' : '#0d6efd',
-                fillOpacity: 0.5,
-                radius: 2000
-            }).addTo(map).bindPopup(content);
-        })(popupContent);
-    });
+    //     (function (content) {
+    //         L.circle([lat, lng], {
+    //             color: obj.drt_store ? '#ffc107' : '#0d6efd',
+    //             fillOpacity: 0.5,
+    //             radius: 2000
+    //         }).addTo(map).bindPopup(content);
+    //     })(popupContent);
+    // });
 
 
     const p = Object.values(JSON.parse(polygon.st_asgeojson).geometry);
