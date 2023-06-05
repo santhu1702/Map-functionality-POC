@@ -1,26 +1,26 @@
 $(document).ready(function () {
-    const coordinates = JSON.parse($('#val').val())
-    console.log('coordinates',coordinates)
+    // const coordinates = JSON.parse($('#val').val())
+    // console.log('coordinates',coordinates) 
+    // const map = L.map('map').setView([coordinates[0].Latitude , coordinates[0].Longitude], 5);
+    // L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    //     maxZoom: 19,    
+    //     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    // }).addTo(map); 
+    // coordinates.forEach(obj => {
+    //     const lat = parseFloat(obj.Latitude);
+    //     const lng = parseFloat(obj.Longitude);
+    //     const popupContent = `Population Density for <b>Zip</b>: ${obj.zip}: ${obj.pop_density}`;
 
-    const map = L.map('map').setView([coordinates[0].Latitude , coordinates[0].Longitude], 5);
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,    
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map);
+    //     (function (content) {
+    //         L.circle([lat, lng], {
+    //             color: obj.drt_store ? '#ffc107' : '#0d6efd',
+    //             fillOpacity: 0.5,
+    //             radius: 20
+    //         }).addTo(map).bindPopup(content);
+    //     })(popupContent);  
+    // });
 
-    coordinates.forEach(obj => {
-        const lat = parseFloat(obj.Latitude);
-        const lng = parseFloat(obj.Longitude);
-        const popupContent = `Population Density for <b>Zip</b>: ${obj.zip}: ${obj.pop_density}`;
 
-        (function (content) {
-            L.circle([lat, lng], {
-                color: obj.drt_store ? '#ffc107' : '#0d6efd',
-                fillOpacity: 0.5,
-                radius: 20
-            }).addTo(map).bindPopup(content);
-        })(popupContent);
-    });
     // $('.ddn_Zip').fSelect'();' 
 
     // const map = L.map('map').setView([51.505, -0.09], 13);
@@ -82,6 +82,7 @@ function getZips() {
                 ddnZip += ' </select>';
                 $('#div_ddnZip').append(ddnZip);
                 $('.ddn_Zip').fSelect();
+                // $('#lbl_zip').show();
                 $('#div_ddnZip').show();
 
             },
@@ -234,34 +235,36 @@ function leafMap(data, polygon) {
     const coordinatesArray = [jsonObject.lat, jsonObject.lon];
 
     const map = L.map('map')
-    //   .setView(coordinatesArray, 5);
-
-    // L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    //     maxZoom: 19,
-    //     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    // }).addTo(map);
-
-    // data.forEach(obj => {
-    //     const lat = parseFloat(obj.Latitude);
-    //     const lng = parseFloat(obj.Longitude);
-    //     const popupContent = `Population Density for <b>Zip</b>: ${obj.zip}: ${obj.pop_density}`;
-
-    //     (function (content) {
-    //         L.circle([lat, lng], {
-    //             color: obj.drt_store ? '#ffc107' : '#0d6efd',
-    //             fillOpacity: 0.5,
-    //             radius: 2000
-    //         }).addTo(map).bindPopup(content);
-    //     })(popupContent);
-    // });
-
+        .setView(coordinatesArray, 5);
 
     const p = Object.values(JSON.parse(polygon.st_asgeojson).geometry);
     const layer = L.geoJSON({
         type: p[1], "coordinates": p[0]
     });
-    layer.setStyle({ weight: "12", fillOpacity: 0.8 });
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    layer.setStyle({ weight: "1", fillOpacity: 0.8, color: '#EE82EE' });
     map.addLayer(layer);
     map.fitBounds(layer.getBounds());
+
+    data.forEach(obj => {
+        const lat = parseFloat(obj.Latitude);
+        const lng = parseFloat(obj.Longitude);
+        const popupContent = `Population Density for <b>Zip</b>: ${obj.zip}: ${obj.pop_density}`;
+
+        (function (content) {
+            L.circle([lat, lng], {
+                color: obj.drt_store ? '#ffc107' : '#0d6efd',
+                fillOpacity: 0.5,
+                radius: 2000
+            }).addTo(map).bindPopup(content);
+        })(popupContent);
+    });
+
+
+
 }
 

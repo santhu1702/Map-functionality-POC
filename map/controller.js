@@ -56,11 +56,16 @@ async function getACV_Est_Yearly() {
 
 async function getState() {
     try {
-        let query = `
-            SELECT distinct(State) AS [State]
-            FROM
-                [dbo].[mock_stores]
-        `;
+        // let query = `
+        //     SELECT distinct(State) AS [State]
+        //     FROM
+        //         [dbo].[mock_stores]
+        // `; 
+         let query = `
+        SELECT distinct(State) AS [State]
+        FROM
+            [dbo].[book1]
+    `;
         return await dataConnector.getData(query).then((result) => {
             if (result.message === "fail") return result;
             return result.response;
@@ -85,13 +90,17 @@ async function getMapDetailAndCoordinates(zip, state) {
 
 async function getMapDetails(zip) {
     try {
+        // let query = `
+        //     SELECT Latitude,Longitude,drt_store,c.zip,c.[State],pop_density
+        //         FROM 
+        //         mock_stores s INNER JOIN 
+        //         hispanic c on c.zip = s.Zip
+        //         WHERE s.zip IN (SELECT value FROM STRING_SPLIT('${zip}', ','))
+        // `;
         let query = `
-            SELECT Latitude,Longitude,drt_store,c.zip,c.[State],pop_density
-                FROM 
-                mock_stores s INNER JOIN 
-                hispanic c on c.zip = s.Zip
-                WHERE s.zip IN (SELECT value FROM STRING_SPLIT('${zip}', ','))
-        `;
+                 select * from Book1
+                 where State in ('${zip}')
+             `;
         return await dataConnector.getData(query).then((result) => {
             if (result.message === "fail") return result;
             return result.response;
@@ -120,10 +129,13 @@ async function stateGeoCoordinates(state) {
 
 async function getAllMockData() {
     try {
-        let query = `       
-                SELECT Latitude, Longitude, drt_store, ACV_Est_Yearly
-                from [dbo].[mock_storesOriginal] 
-            `; 
+        // let query = `       
+        //         SELECT Latitude, Longitude, drt_store, ACV_Est_Yearly
+        //         from [dbo].[mock_storesOriginal] 
+        //     `; 
+        let query = `
+        SELECT * from book1
+        `
         return await dataConnector.getData(query).then((result) => {
             if (result.message === "fail") return result;
             return result.response;
