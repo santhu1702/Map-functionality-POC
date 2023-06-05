@@ -151,7 +151,7 @@ function getMap() {
             dataType: "json",
             data: {
                 state: State,
-                zip: zip.toString()
+                zip:  "" //zip.toString()
             },
             success: function (result) {
                 // debugger
@@ -253,7 +253,7 @@ function leafMap(data, polygon) {
     data.forEach(obj => {
         const lat = parseFloat(obj.Latitude);
         const lng = parseFloat(obj.Longitude);
-        const popupContent = `Population Density for <b>Zip</b>: ${obj.zip}: ${obj.pop_density}`;
+        const popupContent = `ACV_Est_Yearly : ${obj.ACV_Est_Yearly}`;
 
         (function (content) {
             L.circle([lat, lng], {

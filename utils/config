@@ -4,7 +4,7 @@ var sqlConfig = {
     user: 'quadrant',
     password: 'Crowd#123' ,
     options: {
-        connectTimeout: 15000,
+        connectTimeout: 100000,
         encrypt:true,
         enableArithAbort: true,
     }
